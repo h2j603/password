@@ -22,10 +22,12 @@
         </section>
 
         <section id="screen-main" class="screen">
+            <div id="timer-display">초기화까지 00:00:00:00</div>
+
             <div class="main-content">
-                <p id="status-msg">오늘의 암구호를 입력하세요</p>
+                <p id="status-msg">데이터 로딩 중...</p>
                 
-                <div id="input-area">
+                <div id="input-area" class="hidden">
                     <input type="text" id="pass-input" placeholder="텍스트 입력..." autocomplete="off">
                     <button id="submit-btn">보내기</button>
                 </div>
@@ -36,6 +38,7 @@
                         <div class="result-divider"></div>
                         <div class="result-item"><span>답어(答語)</span> <strong id="display-dap"></strong></div>
                     </div>
+                    <button id="reset-btn">강제 초기화 (기록은 유지됨)</button>
                 </div>
             </div>
             <button class="nav-link" id="go-history">기록 보러가기</button>
@@ -46,7 +49,6 @@
                 <h2>암구호 아카이브</h2>
                 <button id="go-main" class="close-btn">닫기</button>
             </header>
-            
             <div class="table-container">
                 <table id="history-table">
                     <thead>
@@ -57,8 +59,7 @@
                             <th></th>
                         </tr>
                     </thead>
-                    <tbody>
-                        </tbody>
+                    <tbody></tbody>
                 </table>
             </div>
         </section>

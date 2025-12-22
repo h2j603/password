@@ -1,92 +1,73 @@
-/* --- 기본 설정 --- */
+/* 기본 초기화 */
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-body, html { width: 100%; height: 100%; overflow: hidden; background: #fff; color: #000; font-family: sans-serif; }
 
-/* --- 배경 격자 --- */
+/* 1. 바닥 배경 설정 */
+body, html { 
+    width: 100%; height: 100%; overflow: hidden; 
+    background-color: #ffffff; /* 실제 가장 밑바닥은 흰색 */
+}
+
+/* 2. 배경 격자 (바닥 바로 위) */
 .grid-background {
     position: fixed; top: 0; left: 0; width: 200%; height: 200%;
     background-image: 
-        linear-gradient(to right, #e0e0e0 1px, transparent 1px), 
-        linear-gradient(to bottom, #e0e0e0 1px, transparent 1px);
-    background-size: 40px 40px; z-index: -1; transform: translate(-25%, -25%);
+        linear-gradient(to right, #ddd 1px, transparent 1px), 
+        linear-gradient(to bottom, #ddd 1px, transparent 1px);
+    background-size: 40px 40px; 
+    z-index: 0; /* 0으로 설정 */
+    transform: translate(-25%, -25%);
+    pointer-events: none;
 }
 
-/* --- 화면 공통 (완전 투명) --- */
-.screen { 
-    display: none; width: 100%; height: 100vh; 
-    flex-direction: column; justify-content: center; align-items: center; 
-    padding: 30px; position: absolute; 
-    background: transparent !important; /* 모든 배경색 제거 */
+/* 3. 앱 컨테이너 및 섹션 (완전 투명화) */
+#app {
+    position: relative; z-index: 1; /* 그리드보다 위 */
+    width: 100%; height: 100%; background: transparent !important;
+}
+
+.screen {
+    display: none; width: 100%; height: 100vh;
+    flex-direction: column; justify-content: center; align-items: center;
+    padding: 30px; position: absolute;
+    background: transparent !important; /* 흰색 컨테이너 제거 */
 }
 .screen.active { display: flex; }
 
-/* --- 상단 내비게이션 버튼 --- */
-.top-nav-btn {
-    position: absolute; top: 20px; right: 20px;
-    background: #000; color: #fff; border: none;
-    padding: 8px 14px; font-size: 0.7rem; font-weight: bold;
-    z-index: 100;
+.main-content, .intro-content {
+    background: transparent !important; /* 내부 컨텐츠 박스도 투명하게 */
+    width: 100%; display: flex; flex-direction: column; align-items: center;
 }
 
-/* --- 타이머 --- */
-#timer-display { 
-    position: absolute; top: 70px; 
-    font-family: monospace; font-size: 0.8rem; 
-    background: #000; color: #fff; padding: 4px 10px; 
-}
+/* 타이머 및 내비 버튼 */
+.top-nav-btn { position: absolute; top: 20px; right: 20px; background: #000; color: #fff; border: none; padding: 8px 14px; font-size: 0.7rem; font-weight: bold; }
+#timer-display { position: absolute; top: 70px; font-family: monospace; font-size: 0.8rem; background: #000; color: #fff; padding: 4px 10px; }
 
-/* --- 인트로 회전 --- */
+/* 텍스트 요소 */
 .rotating-text { font-size: 2rem; font-weight: 900; animation: rotateSlow 20s linear infinite; }
-@keyframes rotateSlow { from { transform: rotate(0deg); } to { transform: rotate(3600deg); } }
+@keyframes rotateSlow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-/* --- 메인 UI 요소 --- */
 #status-msg { margin-bottom: 25px; font-size: 0.9rem; font-weight: bold; }
-#input-area { width: 100%; max-width: 300px; display: flex; flex-direction: column; gap: 0; }
 
-input { 
-    width: 100%; padding: 18px; 
-    border: 2px solid #000; background: transparent; /* 투명 배경 */
-    font-size: 1rem; text-align: center; outline: none; border-bottom: none; 
-}
-#submit-btn { 
-    width: 100%; padding: 18px; 
-    background: #000; color: #fff; border: 2px solid #000; 
-    font-weight: bold; cursor: pointer; 
-}
+/* 입력창 (테두리만 존재) */
+input { width: 100%; max-width: 300px; padding: 18px; border: 2px solid #000; background: transparent; font-size: 1rem; text-align: center; outline: none; }
+#submit-btn { width: 100%; max-width: 300px; padding: 18px; background: #000; color: #fff; border: 2px solid #000; font-weight: bold; cursor: pointer; }
 
-/* --- 결과 카드 (유리 효과 없음, 선만 존재) --- */
-.result-card { 
-    width: 100%; min-width: 280px; 
-    border: 2px solid #000; padding: 30px; 
-    background: transparent; /* 완전 투명 */
-}
+/* 결과 카드 (테두리만 존재) */
+.result-card { width: 100%; max-width: 320px; border: 2px solid #000; padding: 30px; background: transparent; }
 .result-item span { font-size: 0.65rem; color: #666; display: block; margin-bottom: 5px; }
 .result-item strong { font-size: 1.6rem; display: block; line-height: 1.2; }
 .result-divider { height: 2px; background: #000; margin: 20px 0; }
 
-/* --- 리셋 버튼 --- */
-#reset-btn { 
-    margin-top: 50px; background: transparent; 
-    border: 1px solid #000; color: #000; 
-    padding: 10px 15px; font-size: 0.7rem; cursor: pointer; 
-}
+#reset-btn { margin-top: 50px; background: transparent; border: 1px solid #000; padding: 10px 15px; font-size: 0.7rem; }
 
-/* --- 기록 화면 --- */
-.history-header { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; z-index: 10; }
+/* 기록 화면 테이블 */
 .table-container { width: 100%; overflow-y: auto; flex: 1; background: transparent; }
 table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
-th { text-align: left; padding: 10px; border-bottom: 2px solid #000; background: transparent; }
-td { padding: 12px 10px; border-bottom: 1px solid #000; background: transparent; }
+th { text-align: left; padding: 10px; border-bottom: 2px solid #000; }
+td { padding: 12px 10px; border-bottom: 1px solid #000; }
 
-.status-select { background: transparent; border: 1px solid #000; padding: 2px; font-size: 0.7rem; }
-.status-select.pass { color: green; font-weight: bold; }
-.status-select.fail { color: red; font-weight: bold; }
-
-/* --- 유틸리티 --- */
+/* 유틸리티 */
 .hidden { display: none !important; }
-#desktop-block { 
-    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-    background: #fff; z-index: 10000; justify-content: center; align-items: center; text-align: center; 
-}
+#desktop-block { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 10000; justify-content: center; align-items: center; text-align: center; }
 @media (min-width: 769px) { #desktop-block { display: flex; } }
 .close-btn { background: #000; color: #fff; border: none; padding: 8px 15px; font-size: 0.7rem; }

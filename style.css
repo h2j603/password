@@ -1,25 +1,59 @@
-/* ... (이전 스타일 유지) ... */
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+body, html { width: 100%; height: 100%; overflow: hidden; background: #fff; color: #000; font-family: sans-serif; }
 
-/* 타이머 디자인 */
-#timer-display {
-    position: absolute; top: 60px;
-    font-family: monospace; font-size: 0.9rem;
-    background: #000; color: #fff;
-    padding: 5px 12px; border-radius: 20px;
-    letter-spacing: 0.05em;
+/* 데스크톱 차단 */
+#desktop-block {
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: #fff; z-index: 10000; justify-content: center; align-items: center; text-align: center; padding: 40px;
 }
+@media (min-width: 769px) { #desktop-block { display: flex; } }
+
+/* 격자 배경 */
+.grid-background {
+    position: fixed; top: 0; left: 0; width: 200%; height: 200%;
+    background-image: linear-gradient(to right, #f0f0f0 1px, transparent 1px), linear-gradient(to bottom, #f0f0f0 1px, transparent 1px);
+    background-size: 40px 40px; z-index: -1; transform: translate(-25%, -25%);
+}
+
+/* 섹션 레이아웃 */
+.screen { display: none; width: 100%; height: 100vh; flex-direction: column; justify-content: center; align-items: center; padding: 30px; position: absolute; }
+.screen.active { display: flex; }
+
+/* 타이머 */
+#timer-display { position: absolute; top: 60px; font-family: monospace; font-size: 0.85rem; background: #000; color: #fff; padding: 6px 14px; border-radius: 20px; }
+
+/* 인트로 회전 */
+.rotating-text { font-size: 2.2rem; font-weight: 800; animation: rotateSlow 15s linear infinite; cursor: pointer; }
+@keyframes rotateSlow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+/* 메인 UI */
+#status-msg { margin-bottom: 25px; font-size: 0.95rem; color: #555; text-align: center; }
+#input-area { width: 100%; max-width: 300px; display: flex; flex-direction: column; gap: 10px; }
+input { width: 100%; padding: 16px; border: 1px solid #000; font-size: 1rem; text-align: center; outline: none; border-radius: 0; }
+#submit-btn { width: 100%; padding: 16px; background: #000; color: #fff; border: none; font-weight: bold; }
+
+/* 결과 카드 */
+.result-card { width: 100%; min-width: 260px; border: 2px solid #000; padding: 25px; background: #fff; }
+.result-item span { font-size: 0.7rem; color: #999; display: block; margin-bottom: 4px; }
+.result-item strong { font-size: 1.5rem; word-break: break-all; }
+.result-divider { height: 1px; background: #000; margin: 15px 0; }
 
 /* 초기화 버튼 */
-#reset-btn {
-    margin-top: 30px; background: none;
-    border: 1px solid #ddd; color: #999;
-    padding: 10px 20px; font-size: 0.8rem;
-    cursor: pointer; width: 100%;
-}
+#reset-btn { margin-top: 40px; background: #fff; border: 1px solid #ddd; color: #ff0000; padding: 12px 20px; font-size: 0.75rem; cursor: pointer; }
+#reset-btn:active { background: #fff0f0; }
 
-#reset-btn:active { background: #f5f5f5; }
+/* 기록 테이블 */
+.history-header { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.table-container { width: 100%; overflow-y: auto; flex: 1; }
+table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+th { text-align: left; padding: 10px; border-bottom: 2px solid #000; }
+td { padding: 12px 10px; border-bottom: 1px solid #eee; }
+.status-select { padding: 4px; border: 1px solid #ddd; font-size: 0.75rem; }
+.status-select.pass { color: green; border-color: green; }
+.status-select.fail { color: red; border-color: red; }
+.del-btn { background: none; border: none; color: #ccc; font-size: 1.2rem; }
 
-/* 입력창 영역 확실히 제어 */
+/* 공통 */
+.nav-link { position: absolute; bottom: 50px; background: none; border: none; color: #888; text-decoration: underline; font-size: 0.85rem; }
 .hidden { display: none !important; }
-
-/* ... (나머지 테이블 및 그리드 스타일 유지) ... */
+.close-btn { background: #eee; border: none; padding: 8px 12px; }

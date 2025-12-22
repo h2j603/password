@@ -15,13 +15,14 @@
         <div class="grid-background"></div>
 
         <section id="screen-intro" class="screen active">
+            <button class="top-nav-btn" id="go-history-from-intro">HISTORY</button>
             <div class="intro-content">
                 <h1 class="rotating-text" id="start-btn">그래픽 암구호</h1>
             </div>
-            <button class="nav-link" id="go-history-from-intro">과거 기록 확인하기</button>
         </section>
 
         <section id="screen-main" class="screen">
+            <button class="top-nav-btn" id="go-history">HISTORY</button>
             <div id="timer-display">NEXT RESET: 계산 중...</div>
 
             <div class="main-content">
@@ -42,12 +43,11 @@
 
                 <button id="reset-btn" class="hidden">데이터 강제 초기화</button>
             </div>
-            <button class="nav-link" id="go-history">기록 보러가기</button>
         </section>
 
         <section id="screen-history" class="screen">
             <header class="history-header">
-                <h2>암구호 아카이브</h2>
+                <h2>아카이브</h2>
                 <button id="go-main" class="close-btn">닫기</button>
             </header>
             <div class="table-container">
@@ -56,7 +56,7 @@
                         <tr>
                             <th>날짜</th>
                             <th>문어 / 답어</th>
-                            <th>통과여부</th>
+                            <th>상태</th>
                             <th></th>
                         </tr>
                     </thead>

@@ -1,73 +1,96 @@
-/* 기본 초기화 */
-* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
-/* 1. 바닥 배경 설정 */
-body, html { 
-    width: 100%; height: 100%; overflow: hidden; 
-    background-color: #ffffff; /* 실제 가장 밑바닥은 흰색 */
+/* --- 폰트 설정 --- */
+@font-face {
+    font-family: 'GabiaDun';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2510-1@1.0/GabiaDunn-Regular.woff2') format('woff2');
+    font-weight: normal;
+    font-display: swap;
 }
 
-/* 2. 배경 격자 (바닥 바로 위) */
+/* --- 기본 설정 --- */
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+body, html { 
+    width: 100%; height: 100%; overflow: hidden; 
+    background-color: #ffffff; 
+    /* 기본 서체를 GabiaDun으로 설정 */
+    font-family: 'GabiaDun', sans-serif; 
+    color: #000;
+}
+
+/* --- 배경 격자 (최하단) --- */
 .grid-background {
     position: fixed; top: 0; left: 0; width: 200%; height: 200%;
     background-image: 
         linear-gradient(to right, #ddd 1px, transparent 1px), 
         linear-gradient(to bottom, #ddd 1px, transparent 1px);
     background-size: 40px 40px; 
-    z-index: 0; /* 0으로 설정 */
+    z-index: 0;
     transform: translate(-25%, -25%);
     pointer-events: none;
 }
 
-/* 3. 앱 컨테이너 및 섹션 (완전 투명화) */
-#app {
-    position: relative; z-index: 1; /* 그리드보다 위 */
-    width: 100%; height: 100%; background: transparent !important;
-}
+/* --- 컨테이너 투명화 --- */
+#app { position: relative; z-index: 1; width: 100%; height: 100%; background: transparent !important; }
 
 .screen {
     display: none; width: 100%; height: 100vh;
     flex-direction: column; justify-content: center; align-items: center;
     padding: 30px; position: absolute;
-    background: transparent !important; /* 흰색 컨테이너 제거 */
+    background: transparent !important; /* 배경 가림 방지 */
 }
 .screen.active { display: flex; }
 
-.main-content, .intro-content {
-    background: transparent !important; /* 내부 컨텐츠 박스도 투명하게 */
-    width: 100%; display: flex; flex-direction: column; align-items: center;
+/* --- 타이포그래피 디테일 --- */
+.rotating-text { 
+    font-size: 2.2rem; 
+    font-weight: normal; 
+    animation: rotateSlow 20s linear infinite; 
+    letter-spacing: -0.02em;
 }
 
-/* 타이머 및 내비 버튼 */
-.top-nav-btn { position: absolute; top: 20px; right: 20px; background: #000; color: #fff; border: none; padding: 8px 14px; font-size: 0.7rem; font-weight: bold; }
-#timer-display { position: absolute; top: 70px; font-family: monospace; font-size: 0.8rem; background: #000; color: #fff; padding: 4px 10px; }
-
-/* 텍스트 요소 */
-.rotating-text { font-size: 2rem; font-weight: 900; animation: rotateSlow 20s linear infinite; }
 @keyframes rotateSlow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-#status-msg { margin-bottom: 25px; font-size: 0.9rem; font-weight: bold; }
+#status-msg { margin-bottom: 30px; font-size: 1rem; text-align: center; }
 
-/* 입력창 (테두리만 존재) */
-input { width: 100%; max-width: 300px; padding: 18px; border: 2px solid #000; background: transparent; font-size: 1rem; text-align: center; outline: none; }
-#submit-btn { width: 100%; max-width: 300px; padding: 18px; background: #000; color: #fff; border: 2px solid #000; font-weight: bold; cursor: pointer; }
+/* --- 입력 및 버튼 --- */
+#input-area { width: 100%; max-width: 300px; display: flex; flex-direction: column; }
+input { 
+    width: 100%; padding: 18px; 
+    border: 2px solid #000; background: transparent; 
+    font-family: 'GabiaDun', sans-serif; font-size: 1.1rem; 
+    text-align: center; outline: none; border-bottom: none; 
+}
+#submit-btn { 
+    width: 100%; padding: 18px; 
+    background: #000; color: #fff; border: 2px solid #000; 
+    font-family: 'GabiaDun', sans-serif; font-size: 1rem; font-weight: bold; 
+}
 
-/* 결과 카드 (테두리만 존재) */
-.result-card { width: 100%; max-width: 320px; border: 2px solid #000; padding: 30px; background: transparent; }
-.result-item span { font-size: 0.65rem; color: #666; display: block; margin-bottom: 5px; }
-.result-item strong { font-size: 1.6rem; display: block; line-height: 1.2; }
-.result-divider { height: 2px; background: #000; margin: 20px 0; }
+/* --- 결과 카드 (선 중심) --- */
+.result-card { width: 100%; max-width: 320px; border: 2px solid #000; padding: 35px 25px; background: transparent; }
+.result-item span { font-size: 0.7rem; color: #666; display: block; margin-bottom: 8px; opacity: 0.7; }
+.result-item strong { font-size: 1.8rem; display: block; line-height: 1.1; word-break: break-all; }
+.result-divider { height: 2px; background: #000; margin: 25px 0; }
 
-#reset-btn { margin-top: 50px; background: transparent; border: 1px solid #000; padding: 10px 15px; font-size: 0.7rem; }
+/* --- 내비게이션 및 타이머 --- */
+.top-nav-btn { position: absolute; top: 20px; right: 20px; background: #000; color: #fff; border: none; padding: 10px 16px; font-family: 'GabiaDun', sans-serif; font-size: 0.75rem; }
+#timer-display { position: absolute; top: 75px; font-family: monospace; font-size: 0.8rem; background: #000; color: #fff; padding: 4px 12px; }
 
-/* 기록 화면 테이블 */
-.table-container { width: 100%; overflow-y: auto; flex: 1; background: transparent; }
-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
-th { text-align: left; padding: 10px; border-bottom: 2px solid #000; }
-td { padding: 12px 10px; border-bottom: 1px solid #000; }
+#reset-btn { margin-top: 50px; background: transparent; border: 1px solid #000; padding: 12px 20px; font-family: 'GabiaDun', sans-serif; font-size: 0.75rem; color: #000; }
 
-/* 유틸리티 */
+/* --- 기록 화면 --- */
+.history-header { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+.table-container { width: 100%; overflow-y: auto; flex: 1; }
+table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+th { text-align: left; padding: 12px 10px; border-bottom: 2px solid #000; }
+td { padding: 15px 10px; border-bottom: 1px solid #000; vertical-align: middle; }
+
+.status-select { background: transparent; border: 1px solid #000; padding: 4px; font-family: 'GabiaDun', sans-serif; font-size: 0.7rem; }
+.status-select.pass { color: green; font-weight: bold; }
+.status-select.fail { color: red; font-weight: bold; }
+
+/* --- 기타 --- */
 .hidden { display: none !important; }
-#desktop-block { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 10000; justify-content: center; align-items: center; text-align: center; }
+#desktop-block { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 10000; justify-content: center; align-items: center; text-align: center; font-family: sans-serif; }
 @media (min-width: 769px) { #desktop-block { display: flex; } }
-.close-btn { background: #000; color: #fff; border: none; padding: 8px 15px; font-size: 0.7rem; }
+.close-btn { background: #000; color: #fff; border: none; padding: 10px 16px; font-family: 'GabiaDun', sans-serif; font-size: 0.75rem; }

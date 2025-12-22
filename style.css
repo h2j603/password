@@ -1,59 +1,92 @@
+/* --- 기본 설정 --- */
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 body, html { width: 100%; height: 100%; overflow: hidden; background: #fff; color: #000; font-family: sans-serif; }
 
-/* 데스크톱 차단 */
-#desktop-block {
-    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: #fff; z-index: 10000; justify-content: center; align-items: center; text-align: center; padding: 40px;
-}
-@media (min-width: 769px) { #desktop-block { display: flex; } }
-
-/* 격자 배경 */
+/* --- 배경 격자 --- */
 .grid-background {
     position: fixed; top: 0; left: 0; width: 200%; height: 200%;
-    background-image: linear-gradient(to right, #f0f0f0 1px, transparent 1px), linear-gradient(to bottom, #f0f0f0 1px, transparent 1px);
+    background-image: 
+        linear-gradient(to right, #e0e0e0 1px, transparent 1px), 
+        linear-gradient(to bottom, #e0e0e0 1px, transparent 1px);
     background-size: 40px 40px; z-index: -1; transform: translate(-25%, -25%);
 }
 
-/* 섹션 레이아웃 */
-.screen { display: none; width: 100%; height: 100vh; flex-direction: column; justify-content: center; align-items: center; padding: 30px; position: absolute; }
+/* --- 화면 공통 (완전 투명) --- */
+.screen { 
+    display: none; width: 100%; height: 100vh; 
+    flex-direction: column; justify-content: center; align-items: center; 
+    padding: 30px; position: absolute; 
+    background: transparent !important; /* 모든 배경색 제거 */
+}
 .screen.active { display: flex; }
 
-/* 타이머 */
-#timer-display { position: absolute; top: 60px; font-family: monospace; font-size: 0.85rem; background: #000; color: #fff; padding: 6px 14px; border-radius: 20px; }
+/* --- 상단 내비게이션 버튼 --- */
+.top-nav-btn {
+    position: absolute; top: 20px; right: 20px;
+    background: #000; color: #fff; border: none;
+    padding: 8px 14px; font-size: 0.7rem; font-weight: bold;
+    z-index: 100;
+}
 
-/* 인트로 회전 */
-.rotating-text { font-size: 2.2rem; font-weight: 800; animation: rotateSlow 15s linear infinite; cursor: pointer; }
-@keyframes rotateSlow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+/* --- 타이머 --- */
+#timer-display { 
+    position: absolute; top: 70px; 
+    font-family: monospace; font-size: 0.8rem; 
+    background: #000; color: #fff; padding: 4px 10px; 
+}
 
-/* 메인 UI */
-#status-msg { margin-bottom: 25px; font-size: 0.95rem; color: #555; text-align: center; }
-#input-area { width: 100%; max-width: 300px; display: flex; flex-direction: column; gap: 10px; }
-input { width: 100%; padding: 16px; border: 1px solid #000; font-size: 1rem; text-align: center; outline: none; border-radius: 0; }
-#submit-btn { width: 100%; padding: 16px; background: #000; color: #fff; border: none; font-weight: bold; }
+/* --- 인트로 회전 --- */
+.rotating-text { font-size: 2rem; font-weight: 900; animation: rotateSlow 20s linear infinite; }
+@keyframes rotateSlow { from { transform: rotate(0deg); } to { transform: rotate(3600deg); } }
 
-/* 결과 카드 */
-.result-card { width: 100%; min-width: 260px; border: 2px solid #000; padding: 25px; background: #fff; }
-.result-item span { font-size: 0.7rem; color: #999; display: block; margin-bottom: 4px; }
-.result-item strong { font-size: 1.5rem; word-break: break-all; }
-.result-divider { height: 1px; background: #000; margin: 15px 0; }
+/* --- 메인 UI 요소 --- */
+#status-msg { margin-bottom: 25px; font-size: 0.9rem; font-weight: bold; }
+#input-area { width: 100%; max-width: 300px; display: flex; flex-direction: column; gap: 0; }
 
-/* 초기화 버튼 */
-#reset-btn { margin-top: 40px; background: #fff; border: 1px solid #ddd; color: #ff0000; padding: 12px 20px; font-size: 0.75rem; cursor: pointer; }
-#reset-btn:active { background: #fff0f0; }
+input { 
+    width: 100%; padding: 18px; 
+    border: 2px solid #000; background: transparent; /* 투명 배경 */
+    font-size: 1rem; text-align: center; outline: none; border-bottom: none; 
+}
+#submit-btn { 
+    width: 100%; padding: 18px; 
+    background: #000; color: #fff; border: 2px solid #000; 
+    font-weight: bold; cursor: pointer; 
+}
 
-/* 기록 테이블 */
-.history-header { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.table-container { width: 100%; overflow-y: auto; flex: 1; }
-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-th { text-align: left; padding: 10px; border-bottom: 2px solid #000; }
-td { padding: 12px 10px; border-bottom: 1px solid #eee; }
-.status-select { padding: 4px; border: 1px solid #ddd; font-size: 0.75rem; }
-.status-select.pass { color: green; border-color: green; }
-.status-select.fail { color: red; border-color: red; }
-.del-btn { background: none; border: none; color: #ccc; font-size: 1.2rem; }
+/* --- 결과 카드 (유리 효과 없음, 선만 존재) --- */
+.result-card { 
+    width: 100%; min-width: 280px; 
+    border: 2px solid #000; padding: 30px; 
+    background: transparent; /* 완전 투명 */
+}
+.result-item span { font-size: 0.65rem; color: #666; display: block; margin-bottom: 5px; }
+.result-item strong { font-size: 1.6rem; display: block; line-height: 1.2; }
+.result-divider { height: 2px; background: #000; margin: 20px 0; }
 
-/* 공통 */
-.nav-link { position: absolute; bottom: 50px; background: none; border: none; color: #888; text-decoration: underline; font-size: 0.85rem; }
+/* --- 리셋 버튼 --- */
+#reset-btn { 
+    margin-top: 50px; background: transparent; 
+    border: 1px solid #000; color: #000; 
+    padding: 10px 15px; font-size: 0.7rem; cursor: pointer; 
+}
+
+/* --- 기록 화면 --- */
+.history-header { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; z-index: 10; }
+.table-container { width: 100%; overflow-y: auto; flex: 1; background: transparent; }
+table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+th { text-align: left; padding: 10px; border-bottom: 2px solid #000; background: transparent; }
+td { padding: 12px 10px; border-bottom: 1px solid #000; background: transparent; }
+
+.status-select { background: transparent; border: 1px solid #000; padding: 2px; font-size: 0.7rem; }
+.status-select.pass { color: green; font-weight: bold; }
+.status-select.fail { color: red; font-weight: bold; }
+
+/* --- 유틸리티 --- */
 .hidden { display: none !important; }
-.close-btn { background: #eee; border: none; padding: 8px 12px; }
+#desktop-block { 
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+    background: #fff; z-index: 10000; justify-content: center; align-items: center; text-align: center; 
+}
+@media (min-width: 769px) { #desktop-block { display: flex; } }
+.close-btn { background: #000; color: #fff; border: none; padding: 8px 15px; font-size: 0.7rem; }

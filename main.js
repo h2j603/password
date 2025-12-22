@@ -1,4 +1,3 @@
-// 1. Firebase 설정 적용
 const firebaseConfig = {
     apiKey: "AIzaSyC-BopInOkG2KsTt5dE-4nJ7dvFn2FuM9s",
     authDomain: "graphic-password-5c72a.firebaseapp.com",
@@ -13,44 +12,39 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// 기기 식별용 ID
 if (!localStorage.getItem('gp_user_id')) {
     localStorage.setItem('gp_user_id', 'u_' + Math.random().toString(36).substr(2, 9));
 }
 const myId = localStorage.getItem('gp_user_id');
-
 let currentData = null;
 
-// --- 핵심 기능: 월요일 리셋 로직 ---
-function checkMondayReset() {
+// --- 1. 절대적 타이머 로직 (다음 주 월요일 00:00:00) ---
+function updateTimer() {
     const now = new Date();
-    const day = now.getDay(); // 0:일, 1:월
-    const dateStr = now.toISOString().split('T')[0];
+    const nextMonday = new Date();
+    // 다음 월요일 구하기
+    nextMonday.setDate(now.getDate() + (7 - now.getDay() || 7));
+    nextMonday.setHours(0, 0, 0, 0);
 
-    db.ref('lastResetDate').once('value', (snapshot) => {
-        const lastReset = snapshot.val();
-        // 오늘이 월요일인데 마지막 리셋 기록이 오늘과 다르다면 실행
-        if (day === 1 && lastReset !== dateStr) {
-            db.ref('current').once('value', (currSnap) => {
-                const data = currSnap.val();
-                if (data && data.mun) {
-                    // 아카이브로 이동
-                    db.ref('history').push({
-                        date: dateStr,
-                        mun: data.mun,
-                        dap: data.dap || "(답어 없음)",
-                        status: "움직이면 쏜다"
-                    });
-                }
-                // 초기화
-                db.ref('current').set({ mun: "", dap: "", u1: "", u2: "" });
-                db.ref('lastResetDate').set(dateStr);
-            });
-        }
-    });
+    const diff = nextMonday - now;
+    
+    if (diff <= 0) {
+        // 월요일 0시가 되면 자동 초기화 트리거
+        handleReset();
+        return;
+    }
+
+    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const m = Math.floor((diff / (1000 * 60)) % 60);
+    const s = Math.floor((diff / 1000) % 60);
+
+    document.getElementById('timer-display').innerText = 
+        `NEXT RESET: ${d}d ${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
 }
+setInterval(updateTimer, 1000);
 
-// --- 데이터 감시: 메인 화면 ---
+// --- 2. 데이터 감시 및 UI 업데이트 ---
 db.ref('current').on('value', (snapshot) => {
     currentData = snapshot.val();
     const msg = document.getElementById('status-msg');
@@ -71,66 +65,85 @@ db.ref('current').on('value', (snapshot) => {
         }
         resArea.classList.add('hidden');
     } else {
-        msg.innerText = "이번 주 암구호 동기화 완료";
-        inArea.classList.add('hidden');
+        // 두 명 모두 입력 완료 시
+        msg.innerText = "이번 주 암구호 완성";
+        inArea.classList.add('hidden'); // 입력창 소멸
         resArea.classList.remove('hidden');
         document.getElementById('display-mun').innerText = currentData.mun;
         document.getElementById('display-dap').innerText = currentData.dap;
     }
 });
 
-// --- 데이터 전송 ---
+// --- 3. 입력 기능 (두 번째 입력 시 즉시 기록 저장) ---
 document.getElementById('submit-btn').onclick = () => {
     const input = document.getElementById('pass-input');
     const val = input.value.trim();
     if (!val) return;
 
     if (!currentData || !currentData.mun) {
-        db.ref('current').update({ mun: val, u1: myId });
+        db.ref('current').set({ mun: val, u1: myId, date: new Date().toISOString().split('T')[0] });
     } else if (!currentData.dap && currentData.u1 !== myId) {
+        // 답어 입력 시: current 업데이트 + history에 즉시 추가
+        const dateStr = new Date().toISOString().split('T')[0];
         db.ref('current').update({ dap: val, u2: myId });
+        
+        db.ref('history').push({
+            date: dateStr,
+            mun: currentData.mun,
+            dap: val,
+            status: "움직이면 쏜다"
+        });
     }
     input.value = "";
 };
 
-// --- 기록 화면 처리 ---
+// --- 4. 초기화 기능 ---
+function handleReset() {
+    db.ref('current').set(null);
+}
+document.getElementById('reset-btn').onclick = () => {
+    if(confirm('메인 화면을 초기화할까요? (이미 저장된 기록은 유지됩니다)')) {
+        handleReset();
+    }
+};
+
+// --- 5. 기록 화면 렌더링 및 조작 ---
 db.ref('history').on('value', (snapshot) => {
     const tbody = document.querySelector('#history-table tbody');
     tbody.innerHTML = "";
     const data = snapshot.val();
+    if (!data) return;
     
-    for (let key in data) {
-        const item = data[key];
+    // 최신순 정렬을 위해 배열화
+    const items = Object.keys(data).map(key => ({ id: key, ...data[key] })).reverse();
+    
+    items.forEach(item => {
         const tr = document.createElement('tr');
         const statusClass = item.status === '통과' ? 'pass' : 'fail';
-        
         tr.innerHTML = `
-            <td>${item.date.split('-').slice(1).join('/')}</td>
-            <td><strong>${item.mun}</strong><br>${item.dap}</td>
+            <td>${item.date.slice(5)}</td>
+            <td><strong>${item.mun}</strong> / ${item.dap}</td>
             <td>
-                <select onchange="updateStatus('${key}', this.value)" class="status-select ${statusClass}">
+                <select onchange="updateStatus('${item.id}', this.value)" class="status-select ${statusClass}">
                     <option value="통과" ${item.status === '통과' ? 'selected' : ''}>통과</option>
                     <option value="움직이면 쏜다" ${item.status === '움직이면 쏜다' ? 'selected' : ''}>움직이면 쏜다</option>
                 </select>
             </td>
-            <td><button class="del-btn" onclick="deleteItem('${key}')">×</button></td>
+            <td><button class="del-btn" onclick="deleteItem('${item.id}')">×</button></td>
         `;
         tbody.appendChild(tr);
-    }
+    });
 });
 
 window.updateStatus = (key, val) => db.ref(`history/${key}`).update({ status: val });
-window.deleteItem = (key) => { if(confirm('이 기록을 삭제할까요?')) db.ref(`history/${key}`).remove(); };
+window.deleteItem = (key) => { if(confirm('기록을 삭제하시겠습니까?')) db.ref(`history/${key}`).remove(); };
 
-// --- 화면 전환 ---
+// 화면 전환
 function go(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
 }
-
 document.getElementById('start-btn').onclick = () => go('screen-main');
 document.getElementById('go-history-from-intro').onclick = () => go('screen-history');
 document.getElementById('go-history').onclick = () => go('screen-history');
 document.getElementById('go-main').onclick = () => go('screen-main');
-
-checkMondayReset();

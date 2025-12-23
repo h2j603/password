@@ -19,17 +19,20 @@
                     <span class="mosaic-text" id="intro-text-container"></span>
                 </h1>
             </div>
-            <button class="center-nav-btn" id="go-history-from-intro">ARCHIVE</button>
+            <span class="text-link" id="go-history-from-intro">HISTORY</span>
         </section>
 
         <section id="screen-main" class="screen">
             <div id="timer-display">NEXT RESET: --:--:--</div>
+
             <div class="main-content">
                 <p id="status-msg">INITIALIZING...</p>
+                
                 <div id="input-area" class="hidden">
                     <input type="text" id="pass-input" placeholder="Type here..." autocomplete="off">
-                    <button id="submit-btn">SEND</button>
+                    <span class="text-link action-link" id="submit-btn">SEND</span>
                 </div>
+
                 <div id="result-area" class="hidden">
                     <div class="result-card">
                         <div class="result-item"><span>CHALLENGE</span> <strong id="display-mun"></strong></div>
@@ -37,9 +40,10 @@
                         <div class="result-item"><span>PASSWORD</span> <strong id="display-dap"></strong></div>
                     </div>
                 </div>
-                <div class="button-group">
-                    <button id="reset-btn" class="hidden">FORCE RESET</button>
-                    <button class="center-nav-btn" id="go-history">HISTORY</button>
+
+                <div class="link-group">
+                    <span class="text-link danger-link hidden" id="reset-btn">FORCE RESET</span>
+                    <span class="text-link" id="go-history">HISTORY</span>
                 </div>
             </div>
         </section>
@@ -47,7 +51,7 @@
         <section id="screen-history" class="screen">
             <header class="history-header">
                 <h2>ARCHIVE</h2>
-                <button id="go-main" class="close-btn">CLOSE</button>
+                <span class="text-link" id="go-main">CLOSE</span>
             </header>
             <div class="table-container">
                 <table id="history-table">

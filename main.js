@@ -19,7 +19,7 @@ const db = firebase.database();
 const introTextContainer = document.getElementById('intro-text-container');
 const startBtn = document.getElementById('start-btn');
 const originalText = "CHALLENGE & PASSWORD";
-const mosaicChars = ["●", "○", "■", "□", "▲", "△", "×", "‡", "§"];
+const mosaicChars = ["●", "○", "■", "□", "3", "7", "9", "1", "×", "‡", "§"];
 
 function animateMosaic() {
     let newHtml = "";

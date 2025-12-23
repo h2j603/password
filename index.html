@@ -11,24 +11,23 @@
         <p>이 웹은 오직 핸드폰에서만 기능합니다.</p>
     </div>
 
-    <div class="grid-background"></div>
+    <canvas id="grid-canvas"></canvas>
 
     <div id="app">
         <section id="screen-intro" class="screen active">
-            <button class="top-nav-btn" id="go-history-from-intro">HISTORY</button>
             <div class="intro-content">
                 <h1 class="rotating-text" id="start-btn">
                     <span class="mosaic-text" id="intro-text-container"></span>
                 </h1>
             </div>
+            <button class="center-nav-btn" id="go-history-from-intro">HISTORY</button>
         </section>
 
         <section id="screen-main" class="screen">
-            <button class="top-nav-btn" id="go-history">HISTORY</button>
             <div id="timer-display">NEXT RESET: --:--:--</div>
 
             <div class="main-content">
-                <p id="status-msg">로딩 중...</p>
+                <p id="status-msg">데이터 로딩 중...</p>
                 
                 <div id="input-area" class="hidden">
                     <input type="text" id="pass-input" placeholder="텍스트 입력..." autocomplete="off">
@@ -43,7 +42,10 @@
                     </div>
                 </div>
 
-                <button id="reset-btn" class="hidden">데이터 강제 초기화</button>
+                <div class="button-group">
+                    <button id="reset-btn" class="hidden">데이터 강제 초기화</button>
+                    <button class="center-nav-btn" id="go-history">HISTORY</button>
+                </div>
             </div>
         </section>
 

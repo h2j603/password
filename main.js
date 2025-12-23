@@ -1,3 +1,4 @@
+// Firebase Config
 const firebaseConfig = {
     apiKey: "AIzaSyC-BopInOkG2KsTt5dE-4nJ7dvFn2FuM9s",
     authDomain: "graphic-password-5c72a.firebaseapp.com",
@@ -12,7 +13,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// --- 1. Matrix Grid Engine ---
+// --- 1. Matrix Grid Engine (Color Updated) ---
 const canvas = document.getElementById('grid-canvas');
 const ctx = canvas.getContext('2d');
 let width, height, columns, rows;
@@ -29,7 +30,7 @@ function resize() {
 
 function drawGrid() {
     ctx.clearRect(0, 0, width, height);
-    ctx.strokeStyle = '#06ba57';
+    ctx.strokeStyle = '#1a964e'; // Updated Green
     ctx.lineWidth = 0.5;
 
     for(let i=0; i<=columns; i++) {
@@ -41,7 +42,7 @@ function drawGrid() {
         ctx.globalAlpha = (Math.cos(Date.now() * 0.001 + j) * 0.07) + 0.1; ctx.stroke();
     }
 
-    ctx.fillStyle = '#06ba57';
+    ctx.fillStyle = '#1a964e'; // Updated Green
     for(let i=0; i<columns; i++) {
         if(Math.random() > 0.988) {
             let r = Math.floor(Math.random() * rows);
@@ -64,13 +65,13 @@ resize(); drawGrid();
 // --- 2. Intro Text Interaction ---
 const introTextContainer = document.getElementById('intro-text-container');
 const startBtn = document.getElementById('start-btn');
-const originalText = "CHALLENGE & PASSWORD"; // Updated Title
+const originalText = "CHALLENGE & PASSWORD";
 const mosaicChars = ["●", "○", "■", "□", "▲", "△", "×", "‡", "§"];
 
 function animateMosaic() {
     let newHtml = "";
-    // Randomize Font 'RAND' axis for glitch effect
-    const jitter = Math.floor(Math.random() * 50);
+    // Randomize Font 'RAND' axis ONLY for Intro Text
+    const jitter = Math.floor(Math.random() * 55);
     startBtn.style.fontVariationSettings = `"RAND" ${jitter}, "wght" 700`;
 
     for (let i = 0; i < originalText.length; i++) {

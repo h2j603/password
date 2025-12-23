@@ -13,17 +13,14 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// --- (Matrix Grid Engine Removed) ---
-
-// --- 1. Intro Text Interaction ---
+// --- 1. Intro Animation ---
 const introTextContainer = document.getElementById('intro-text-container');
 const startBtn = document.getElementById('start-btn');
 const originalText = "CHALLENGE & PASSWORD";
-const mosaicChars = ["●", "○", "■", "□", "3", "7", "9", "1", "×", "‡", "§"];
+const mosaicChars = ["●", "○", "■", "□", "▲", "△", "×", "‡", "§"];
 
 function animateMosaic() {
     let newHtml = "";
-    // Randomize Font 'RAND' axis ONLY for Intro Text
     const jitter = Math.floor(Math.random() * 55);
     startBtn.style.fontVariationSettings = `"RAND" ${jitter}, "wght" 700`;
 
@@ -36,7 +33,7 @@ function animateMosaic() {
 }
 setInterval(animateMosaic, 170);
 
-// --- 2. Functional Logic ---
+// --- 2. Core Logic ---
 if (!localStorage.getItem('gp_id')) {
     localStorage.setItem('gp_id', 'u_' + Math.random().toString(36).substr(2, 9));
 }
@@ -57,11 +54,11 @@ setInterval(updateTimer, 1000);
 
 function handleManualReset() {
     db.ref('current').set(null, (e) => {
-        if (e) alert("System Error: " + e.message);
-        else { alert("Current Session Cleared."); location.reload(); }
+        if (e) alert("Error: " + e.message);
+        else { alert("Session reset."); location.reload(); }
     });
 }
-document.getElementById('reset-btn').onclick = () => { if(confirm('Clear session?')) handleManualReset(); };
+document.getElementById('reset-btn').onclick = () => { if(confirm('Clear current session?')) handleManualReset(); };
 
 db.ref('current').on('value', (snap) => {
     currentData = snap.val();
@@ -75,7 +72,7 @@ db.ref('current').on('value', (snap) => {
         else { msg.innerText = "PROVIDE PASSWORD"; inArea.classList.remove('hidden'); }
         resArea.classList.add('hidden');
     } else {
-        msg.innerText = "CONNECTION ESTABLISHED"; inArea.classList.add('hidden'); resArea.classList.remove('hidden');
+        msg.innerText = "CONNECTION SECURE"; inArea.classList.add('hidden'); resArea.classList.remove('hidden');
         document.getElementById('display-mun').innerText = currentData.mun; document.getElementById('display-dap').innerText = currentData.dap;
     }
 });
@@ -96,14 +93,14 @@ db.ref('history').on('value', (snap) => {
     const tbody = document.querySelector('#history-table tbody'); tbody.innerHTML = "";
     const data = snap.val(); if (!data) return;
     Object.keys(data).reverse().forEach(key => {
-        const item = data[key], tr = document.createElement('tr'), sClass = item.status === 'ACCESS' ? 'pass' : 'fail';
-        tr.innerHTML = `<td>${item.date.slice(5)}</td><td><strong>${item.mun}</strong> / ${item.dap}</td><td><select onchange="updateStatus('${key}', this.value)" class="status-select ${sClass}"><option value="ACCESS" ${item.status === 'ACCESS' ? 'selected' : ''}>ACCESS</option><option value="LOCKED" ${item.status === 'LOCKED' ? 'selected' : ''}>LOCKED</option></select></td><td><button class="del-btn" onclick="deleteItem('${key}')">×</button></td>`;
+        const item = data[key], tr = document.createElement('tr');
+        tr.innerHTML = `<td>${item.date.slice(5)}</td><td><strong>${item.mun}</strong> / ${item.dap}</td><td><select onchange="updateStatus('${key}', this.value)" class="status-select"><option value="ACCESS" ${item.status === 'ACCESS' ? 'selected' : ''}>ACCESS</option><option value="LOCKED" ${item.status === 'LOCKED' ? 'selected' : ''}>LOCKED</option></select></td><td><span class="del-link" onclick="deleteItem('${key}')">DEL</span></td>`;
         tbody.appendChild(tr);
     });
 });
 
 window.updateStatus = (k, v) => db.ref(`history/${k}`).update({ status: v });
-window.deleteItem = (k) => { if(confirm('Delete record?')) db.ref(`history/${k}`).remove(); };
+window.deleteItem = (k) => { if(confirm('Delete?')) db.ref(`history/${k}`).remove(); };
 
 function go(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
 document.getElementById('start-btn').onclick = () => go('screen-main');

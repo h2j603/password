@@ -1,12 +1,12 @@
-/* --- 폰트 설정 (Soonbatang 3종) --- */
+/* --- 폰트 설정 (Soonbatang) --- */
 @font-face { font-family: 'Soonbatang'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_eight@1.0/SunBatang-Light.woff') format('woff'); font-weight: 300; font-display: swap; }
 @font-face { font-family: 'Soonbatang'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_eight@1.0/SunBatang-Medium.woff') format('woff'); font-weight: 500; font-display: swap; }
 @font-face { font-family: 'Soonbatang'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_eight@1.0/SunBatang-Bold.woff') format('woff'); font-weight: 700; font-display: swap; }
 
-/* --- 기본 설정 & 컬러 변수 --- */
+/* --- 컬러 변수 및 초기화 --- */
 :root {
-    --primary-color: #06ba57; /* 기존 블랙 대체 */
-    --bg-color: #d4d9d6;      /* 기존 배경 대체 */
+    --primary-color: #06ba57;
+    --bg-color: #d4d9d6;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -15,76 +15,83 @@ body, html {
     width: 100%; height: 100%; overflow: hidden; 
     background-color: var(--bg-color); 
     font-family: 'Soonbatang', sans-serif; 
-    font-weight: 500; color: var(--primary-color);
+    color: var(--primary-color);
 }
 
-/* --- 배경 격자 (투톤 적용) --- */
-.grid-background {
-    position: fixed; top: 0; left: 0; width: 200%; height: 200%;
-    background-image: 
-        linear-gradient(to right, rgba(6, 186, 87, 0.2) 1px, transparent 1px), 
-        linear-gradient(to bottom, rgba(6, 186, 87, 0.2) 1px, transparent 1px);
-    background-size: 40px 40px; 
-    z-index: 0; transform: translate(-25%, -25%); pointer-events: none;
-    opacity: 0.5; /* 배경색과 어우러지게 투명도 조절 */
-}
+/* --- 매트릭스 캔버스 --- */
+#grid-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
 
-/* --- 컨테이너 투명화 --- */
 #app { position: relative; z-index: 1; width: 100%; height: 100%; background: transparent !important; }
-.screen { display: none; width: 100%; height: 100vh; flex-direction: column; justify-content: center; align-items: center; padding: 30px; position: absolute; background: transparent !important; }
+
+/* --- 화면 공통 레이아웃 --- */
+.screen { 
+    display: none; width: 100%; height: 100vh; 
+    flex-direction: column; justify-content: center; align-items: center; 
+    padding: 30px; position: absolute; background: transparent !important; 
+}
 .screen.active { display: flex; }
 
-/* --- 인트로 (모자이크 및 회전) --- */
+/* --- 인트로 인터랙션 --- */
 .rotating-text { 
     font-size: 2.2rem; font-weight: 700; 
     animation: rotateSlow 20s linear infinite; 
-    letter-spacing: -0.02em; color: var(--primary-color); cursor: pointer;
+    letter-spacing: -0.02em; cursor: pointer;
 }
 @keyframes rotateSlow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-/* 모자이크 개별 글자 스타일 */
 .mosaic-char { display: inline-block; width: 1.2em; text-align: center; }
 
-/* --- 메인 UI --- */
-#status-msg { margin-bottom: 30px; font-size: 1rem; font-weight: 500; text-align: center; }
+/* --- 중앙 정렬 버튼 시스템 --- */
+.center-nav-btn {
+    display: block; background: var(--primary-color); color: var(--bg-color);
+    border: none; padding: 12px 28px; font-family: 'Soonbatang', sans-serif;
+    font-size: 0.85rem; font-weight: 700; cursor: pointer; margin-top: 20px;
+}
+
+#screen-intro .center-nav-btn { position: absolute; bottom: 80px; }
+
+.button-group {
+    width: 100%; display: flex; flex-direction: column; align-items: center; gap: 15px; margin-top: 40px;
+}
+
+/* --- 메인 UI 요소 --- */
+#status-msg { margin-bottom: 30px; font-size: 1rem; font-weight: 700; text-align: center; }
+#timer-display { position: absolute; top: 40px; background: var(--primary-color); color: var(--bg-color); padding: 4px 12px; font-family: monospace; font-size: 0.8rem; }
+
 #input-area { width: 100%; max-width: 300px; display: flex; flex-direction: column; }
 input { 
-    width: 100%; padding: 18px; 
-    border: 2px solid var(--primary-color); background: transparent; 
-    font-family: 'Soonbatang', sans-serif; font-weight: 500; font-size: 1.1rem; 
-    text-align: center; outline: none; border-bottom: none; color: var(--primary-color);
+    width: 100%; padding: 18px; border: 2px solid var(--primary-color); background: transparent; 
+    font-family: 'Soonbatang', sans-serif; font-size: 1.1rem; text-align: center; 
+    outline: none; border-bottom: none; color: var(--primary-color);
 }
-input::placeholder { color: rgba(6, 186, 87, 0.5); }
 #submit-btn { 
-    width: 100%; padding: 18px; 
-    background: var(--primary-color); color: var(--bg-color); border: 2px solid var(--primary-color); 
-    font-family: 'Soonbatang', sans-serif; font-size: 1rem; font-weight: 700; cursor: pointer;
+    width: 100%; padding: 18px; background: var(--primary-color); color: var(--bg-color); 
+    border: 2px solid var(--primary-color); font-family: 'Soonbatang', sans-serif; 
+    font-size: 1rem; font-weight: 700; cursor: pointer;
 }
 
-/* --- 결과 카드 --- */
-.result-card { width: 100%; max-width: 320px; border: 2px solid var(--primary-color); padding: 35px 25px; background: transparent; }
-.result-item span { font-size: 0.7rem; color: var(--primary-color); display: block; margin-bottom: 8px; opacity: 0.7; font-weight: 300; }
-.result-item strong { font-size: 1.8rem; display: block; line-height: 1.1; word-break: break-all; font-weight: 700; }
+.result-card { width: 100%; max-width: 320px; border: 2px solid var(--primary-color); padding: 35px 25px; background: var(--bg-color); }
+.result-item span { font-size: 0.65rem; display: block; margin-bottom: 8px; font-weight: 300; }
+.result-item strong { font-size: 1.8rem; display: block; line-height: 1.1; font-weight: 700; }
 .result-divider { height: 2px; background: var(--primary-color); margin: 25px 0; }
 
-/* --- 내비게이션 및 타이머 --- */
-.top-nav-btn { position: absolute; top: 20px; right: 20px; background: var(--primary-color); color: var(--bg-color); border: none; padding: 10px 16px; font-family: 'Soonbatang', sans-serif; font-size: 0.75rem; font-weight: 700; }
-#timer-display { position: absolute; top: 75px; font-family: monospace; font-size: 0.8rem; background: var(--primary-color); color: var(--bg-color); padding: 4px 12px; font-weight: 500; }
-#reset-btn { margin-top: 50px; background: transparent; border: 1px solid var(--primary-color); padding: 12px 20px; font-family: 'Soonbatang', sans-serif; font-size: 0.75rem; color: var(--primary-color); font-weight: 500; cursor: pointer; }
+#reset-btn { 
+    background: transparent; border: 1px solid var(--primary-color); padding: 12px 20px; 
+    font-family: 'Soonbatang', sans-serif; font-size: 0.75rem; color: var(--primary-color);
+}
 
 /* --- 기록 화면 --- */
 .history-header { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-h2 { font-weight: 700; }
 .table-container { width: 100%; overflow-y: auto; flex: 1; }
 table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
 th { text-align: left; padding: 12px 10px; border-bottom: 2px solid var(--primary-color); font-weight: 700; }
-td { padding: 15px 10px; border-bottom: 1px solid rgba(6, 186, 87, 0.3); vertical-align: middle; font-weight: 500; }
-.status-select { background: transparent; border: 1px solid var(--primary-color); padding: 4px; font-family: 'Soonbatang', sans-serif; font-size: 0.7rem; color: var(--primary-color); }
-.status-select.pass { color: var(--primary-color); font-weight: 700; } /* 통과도 테마색으로 통일 */
-.status-select.fail { color: #e74c3c; font-weight: 700; } /* 실패는 붉은색 유지 */
-.del-btn { background: none; border: none; color: var(--primary-color); font-size: 1.2rem; opacity: 0.5; }
+td { padding: 15px 10px; border-bottom: 1px solid rgba(6, 186, 87, 0.3); }
 
-/* --- 기타 --- */
+.status-select { background: transparent; border: 1px solid var(--primary-color); padding: 4px; font-family: 'Soonbatang', sans-serif; color: var(--primary-color); }
+.status-select.pass { font-weight: 700; }
+.status-select.fail { color: #e74c3c; font-weight: 700; }
+
+/* --- 유틸리티 --- */
 .hidden { display: none !important; }
-#desktop-block { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); z-index: 10000; justify-content: center; align-items: center; text-align: center; color: var(--primary-color); font-weight: 700; }
+#desktop-block { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); z-index: 10000; justify-content: center; align-items: center; text-align: center; }
 @media (min-width: 769px) { #desktop-block { display: flex; } }
-.close-btn { background: var(--primary-color); color: var(--bg-color); border: none; padding: 10px 16px; font-family: 'Soonbatang', sans-serif; font-size: 0.75rem; font-weight: 700; }
+.close-btn { background: var(--primary-color); color: var(--bg-color); border: none; padding: 10px 16px; font-size: 0.75rem; font-weight: 700; }

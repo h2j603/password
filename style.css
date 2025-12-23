@@ -44,7 +44,7 @@ body, html {
 /* --- Intro Screen --- */
 .rotating-text { 
     font-family: var(--font-identity);
-    font-size: 2.2rem; 
+    font-size: 1.8rem; 
     font-variation-settings: "RAND" 40, "wght" 700;
     animation: rotateSlow 30s linear infinite; 
     cursor: pointer;

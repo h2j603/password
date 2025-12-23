@@ -18,7 +18,7 @@ const db = firebase.database();
 // --- 1. Intro Text Interaction ---
 const introTextContainer = document.getElementById('intro-text-container');
 const startBtn = document.getElementById('start-btn');
-const originalText = "GRAPHIC<br>CHALLENGE & PASSWORD";
+const originalText = "CHALLENGE & PASSWORD";
 const mosaicChars = ["●", "○", "■", "□", "▲", "△", "×", "‡", "§"];
 
 function animateMosaic() {

@@ -1,4 +1,3 @@
-// Firebase 설정 (본인의 키값 유지)
 const firebaseConfig = {
     apiKey: "AIzaSyC-BopInOkG2KsTt5dE-4nJ7dvFn2FuM9s",
     authDomain: "graphic-password-5c72a.firebaseapp.com",
@@ -13,11 +12,11 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// --- 1. 매트릭스 그리드 캔버스 엔진 ---
+// --- 1. Matrix Grid Engine ---
 const canvas = document.getElementById('grid-canvas');
 const ctx = canvas.getContext('2d');
 let width, height, columns, rows;
-const cellSize = 25; 
+const cellSize = 24; 
 let gridAlpha = [];
 
 function resize() {
@@ -34,21 +33,17 @@ function drawGrid() {
     ctx.lineWidth = 0.5;
 
     for(let i=0; i<=columns; i++) {
-        ctx.beginPath();
-        ctx.moveTo(i * cellSize, 0); ctx.lineTo(i * cellSize, height);
-        ctx.globalAlpha = (Math.sin(Date.now() * 0.001 + i) * 0.1) + 0.12;
-        ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(i * cellSize, 0); ctx.lineTo(i * cellSize, height);
+        ctx.globalAlpha = (Math.sin(Date.now() * 0.001 + i) * 0.07) + 0.1; ctx.stroke();
     }
     for(let j=0; j<=rows; j++) {
-        ctx.beginPath();
-        ctx.moveTo(0, j * cellSize); ctx.lineTo(width, j * cellSize);
-        ctx.globalAlpha = (Math.cos(Date.now() * 0.001 + j) * 0.1) + 0.12;
-        ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(0, j * cellSize); ctx.lineTo(width, j * cellSize);
+        ctx.globalAlpha = (Math.cos(Date.now() * 0.001 + j) * 0.07) + 0.1; ctx.stroke();
     }
 
     ctx.fillStyle = '#06ba57';
     for(let i=0; i<columns; i++) {
-        if(Math.random() > 0.985) {
+        if(Math.random() > 0.988) {
             let r = Math.floor(Math.random() * rows);
             gridAlpha[i + r * columns] = 1.0;
         }
@@ -56,9 +51,9 @@ function drawGrid() {
     for(let k=0; k<gridAlpha.length; k++) {
         if(gridAlpha[k] > 0.05) {
             let c = k % columns; let r = Math.floor(k / columns);
-            ctx.globalAlpha = gridAlpha[k] * 0.3;
+            ctx.globalAlpha = gridAlpha[k] * 0.25;
             ctx.fillRect(c * cellSize, r * cellSize, cellSize, cellSize);
-            gridAlpha[k] *= 0.93;
+            gridAlpha[k] *= 0.94;
         }
     }
     requestAnimationFrame(drawGrid);
@@ -66,22 +61,28 @@ function drawGrid() {
 window.addEventListener('resize', resize);
 resize(); drawGrid();
 
-// --- 2. 인트로 모자이크 인터랙션 ---
+// --- 2. Intro Text Interaction ---
 const introTextContainer = document.getElementById('intro-text-container');
-const originalText = "그래픽암구호";
-const mosaicChars = ["●", "○", "■", "□", "▲", "△", "◆", "◇"];
+const startBtn = document.getElementById('start-btn');
+const originalText = "CHALLENGE & PASSWORD"; // Updated Title
+const mosaicChars = ["●", "○", "■", "□", "▲", "△", "×", "‡", "§"];
 
 function animateMosaic() {
     let newHtml = "";
+    // Randomize Font 'RAND' axis for glitch effect
+    const jitter = Math.floor(Math.random() * 50);
+    startBtn.style.fontVariationSettings = `"RAND" ${jitter}, "wght" 700`;
+
     for (let i = 0; i < originalText.length; i++) {
-        const charToShow = Math.random() > 0.38 ? originalText[i] : mosaicChars[Math.floor(Math.random() * mosaicChars.length)];
+        if (originalText[i] === " ") { newHtml += " "; continue; }
+        const charToShow = Math.random() > 0.45 ? originalText[i] : mosaicChars[Math.floor(Math.random() * mosaicChars.length)];
         newHtml += `<span class="mosaic-char">${charToShow}</span>`;
     }
     introTextContainer.innerHTML = newHtml;
 }
-setInterval(animateMosaic, 160);
+setInterval(animateMosaic, 170);
 
-// --- 3. 실시간 데이터 및 타이머 로직 ---
+// --- 3. Functional Logic ---
 if (!localStorage.getItem('gp_id')) {
     localStorage.setItem('gp_id', 'u_' + Math.random().toString(36).substr(2, 9));
 }
@@ -95,31 +96,32 @@ function updateTimer() {
     nextMonday.setHours(0, 0, 0, 0);
     const diff = nextMonday - now;
     if (diff <= 0) { db.ref('current').set(null); return; }
-    const d = Math.floor(diff / (86400000)), h = Math.floor((diff / 3600000) % 24), m = Math.floor((diff / 60000) % 60), s = Math.floor((diff / 1000) % 60);
+    const d = Math.floor(diff / 86400000), h = Math.floor((diff / 3600000) % 24), m = Math.floor((diff / 60000) % 60), s = Math.floor((diff / 1000) % 60);
     document.getElementById('timer-display').innerText = `NEXT RESET: ${d}d ${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
 }
 setInterval(updateTimer, 1000);
 
 function handleManualReset() {
     db.ref('current').set(null, (e) => {
-        if (e) alert(e.message);
-        else { alert("초기화 완료"); location.reload(); }
+        if (e) alert("System Error: " + e.message);
+        else { alert("Current Session Cleared."); location.reload(); }
     });
 }
-document.getElementById('reset-btn').onclick = () => { if(confirm('초기화할까요?')) handleManualReset(); };
+document.getElementById('reset-btn').onclick = () => { if(confirm('Clear session?')) handleManualReset(); };
 
 db.ref('current').on('value', (snap) => {
     currentData = snap.val();
     const msg = document.getElementById('status-msg'), inArea = document.getElementById('input-area'), resArea = document.getElementById('result-area'), rstBtn = document.getElementById('reset-btn');
     if (currentData && (currentData.mun || currentData.dap)) rstBtn.classList.remove('hidden'); else rstBtn.classList.add('hidden');
+    
     if (!currentData || !currentData.mun) {
-        msg.innerText = "오늘의 문어를 입력하세요"; inArea.classList.remove('hidden'); resArea.classList.add('hidden');
+        msg.innerText = "DECLARE CHALLENGE"; inArea.classList.remove('hidden'); resArea.classList.add('hidden');
     } else if (!currentData.dap) {
-        if (currentData.u1 === myId) { msg.innerText = "상대방의 답어를 기다리는 중..."; inArea.classList.add('hidden'); }
-        else { msg.innerText = "답어를 입력하세요"; inArea.classList.remove('hidden'); }
+        if (currentData.u1 === myId) { msg.innerText = "WAITING FOR PASSWORD..."; inArea.classList.add('hidden'); }
+        else { msg.innerText = "PROVIDE PASSWORD"; inArea.classList.remove('hidden'); }
         resArea.classList.add('hidden');
     } else {
-        msg.innerText = "동기화 완료"; inArea.classList.add('hidden'); resArea.classList.remove('hidden');
+        msg.innerText = "CONNECTION ESTABLISHED"; inArea.classList.add('hidden'); resArea.classList.remove('hidden');
         document.getElementById('display-mun').innerText = currentData.mun; document.getElementById('display-dap').innerText = currentData.dap;
     }
 });
@@ -131,7 +133,7 @@ document.getElementById('submit-btn').onclick = () => {
     if (!currentData || !currentData.mun) db.ref('current').set({ mun: val, u1: myId, date: dateStr });
     else if (!currentData.dap && currentData.u1 !== myId) {
         db.ref('current').update({ dap: val, u2: myId });
-        db.ref('history').push({ date: dateStr, mun: currentData.mun, dap: val, status: "움직이면 쏜다" });
+        db.ref('history').push({ date: dateStr, mun: currentData.mun, dap: val, status: "LOCKED" });
     }
     document.getElementById('pass-input').value = "";
 };
@@ -140,14 +142,14 @@ db.ref('history').on('value', (snap) => {
     const tbody = document.querySelector('#history-table tbody'); tbody.innerHTML = "";
     const data = snap.val(); if (!data) return;
     Object.keys(data).reverse().forEach(key => {
-        const item = data[key], tr = document.createElement('tr'), sClass = item.status === '통과' ? 'pass' : 'fail';
-        tr.innerHTML = `<td>${item.date.slice(5)}</td><td><strong>${item.mun}</strong>/${item.dap}</td><td><select onchange="updateStatus('${key}', this.value)" class="status-select ${sClass}"><option value="통과" ${item.status === '통과' ? 'selected' : ''}>통과</option><option value="움직이면 쏜다" ${item.status === '움직이면 쏜다' ? 'selected' : ''}>움직이면 쏜다</option></select></td><td><button class="del-btn" onclick="deleteItem('${key}')">×</button></td>`;
+        const item = data[key], tr = document.createElement('tr'), sClass = item.status === 'ACCESS' ? 'pass' : 'fail';
+        tr.innerHTML = `<td>${item.date.slice(5)}</td><td><strong>${item.mun}</strong> / ${item.dap}</td><td><select onchange="updateStatus('${key}', this.value)" class="status-select ${sClass}"><option value="ACCESS" ${item.status === 'ACCESS' ? 'selected' : ''}>ACCESS</option><option value="LOCKED" ${item.status === 'LOCKED' ? 'selected' : ''}>LOCKED</option></select></td><td><button class="del-btn" onclick="deleteItem('${key}')">×</button></td>`;
         tbody.appendChild(tr);
     });
 });
 
 window.updateStatus = (k, v) => db.ref(`history/${k}`).update({ status: v });
-window.deleteItem = (k) => { if(confirm('삭제하시겠습니까?')) db.ref(`history/${k}`).remove(); };
+window.deleteItem = (k) => { if(confirm('Delete record?')) db.ref(`history/${k}`).remove(); };
 
 function go(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
 document.getElementById('start-btn').onclick = () => go('screen-main');

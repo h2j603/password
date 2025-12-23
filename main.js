@@ -13,56 +13,9 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// --- 1. Matrix Grid Engine (Color Updated) ---
-const canvas = document.getElementById('grid-canvas');
-const ctx = canvas.getContext('2d');
-let width, height, columns, rows;
-const cellSize = 24; 
-let gridAlpha = [];
+// --- (Matrix Grid Engine Removed) ---
 
-function resize() {
-    width = canvas.width = window.innerWidth;
-    height = canvas.height = window.innerHeight;
-    columns = Math.ceil(width / cellSize);
-    rows = Math.ceil(height / cellSize);
-    gridAlpha = Array(columns * rows).fill(0).map(() => Math.random());
-}
-
-function drawGrid() {
-    ctx.clearRect(0, 0, width, height);
-    ctx.strokeStyle = '#1a964e'; // Updated Green
-    ctx.lineWidth = 0.5;
-
-    for(let i=0; i<=columns; i++) {
-        ctx.beginPath(); ctx.moveTo(i * cellSize, 0); ctx.lineTo(i * cellSize, height);
-        ctx.globalAlpha = (Math.sin(Date.now() * 0.001 + i) * 0.07) + 0.1; ctx.stroke();
-    }
-    for(let j=0; j<=rows; j++) {
-        ctx.beginPath(); ctx.moveTo(0, j * cellSize); ctx.lineTo(width, j * cellSize);
-        ctx.globalAlpha = (Math.cos(Date.now() * 0.001 + j) * 0.07) + 0.1; ctx.stroke();
-    }
-
-    ctx.fillStyle = '#1a964e'; // Updated Green
-    for(let i=0; i<columns; i++) {
-        if(Math.random() > 0.988) {
-            let r = Math.floor(Math.random() * rows);
-            gridAlpha[i + r * columns] = 1.0;
-        }
-    }
-    for(let k=0; k<gridAlpha.length; k++) {
-        if(gridAlpha[k] > 0.05) {
-            let c = k % columns; let r = Math.floor(k / columns);
-            ctx.globalAlpha = gridAlpha[k] * 0.25;
-            ctx.fillRect(c * cellSize, r * cellSize, cellSize, cellSize);
-            gridAlpha[k] *= 0.94;
-        }
-    }
-    requestAnimationFrame(drawGrid);
-}
-window.addEventListener('resize', resize);
-resize(); drawGrid();
-
-// --- 2. Intro Text Interaction ---
+// --- 1. Intro Text Interaction ---
 const introTextContainer = document.getElementById('intro-text-container');
 const startBtn = document.getElementById('start-btn');
 const originalText = "CHALLENGE & PASSWORD";
@@ -83,7 +36,7 @@ function animateMosaic() {
 }
 setInterval(animateMosaic, 170);
 
-// --- 3. Functional Logic ---
+// --- 2. Functional Logic ---
 if (!localStorage.getItem('gp_id')) {
     localStorage.setItem('gp_id', 'u_' + Math.random().toString(36).substr(2, 9));
 }
